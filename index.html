@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Info of Country</title>
+</head>
+
+<body>
+
+<div class="container">
+    <div id="app">
+        <div class="jumbotron" :style="jumbotronStyle">
+            <h1 style="color: #2c6371">{{ appTitle}}</h1>
+            <div class="dropdown-divider"></div>
+            <div class="row">
+                <select class="custom-select mr-3 ml-3 mb-3" v-model="selectedCountry" @change="countryInfo">
+                    <option disabled value="">Select country...</option>
+                    <option v-for="country in countries" :value="country.country">{{ country.country }}</option>
+                </select>
+                <div class="col-sm-7">
+                    <img class="img-fluid " :src="flagUrl" :alt="name">
+                </div>
+                <div class="col-sm-5">
+                    <table class="table table-hover">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Country: {{ name }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Alpha2Code: {{ alphaCode }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Capital: {{ capital }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Subregion: {{ subregion }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Cordinate:<br> Latitude: {{ lat }}, Longitude: {{ lng }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Area: {{ area }} KM <sup>2</sup></th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Timezone: {{ timeZone }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Language: {{ language }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Currency: {{ currency }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">People: {{ people }}</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="text-center"><span><strong><small>The information of countries are retrieved from <a
+                    href="https://restcountries.eu">REST Countries</a> link.</small></strong><small></small></span></p>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/vue.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script>
+    /* Vue app starts*/
+    var app = new Vue({
+        el: '#app',
+        data: {
+            appTitle: 'General Information of Country',
+            flagUrl: '',
+            name: '',
+            capital: '',
+            alphaCode: '',
+            subregion: '',
+            timeZone: '',
+            lat: '',
+            lng: '',
+            language: '',
+            currency: '',
+            countries: [],
+            selectedCountry: '',
+            people: '',
+            area: '',
+            jumbotronStyle: {
+                backgroundColor: '#e9ecef80',
+                marginTop: '50px',
+                width: '800px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                padding: '10px'
+            }
+        },
+        computed: {
+            countriesName: function () {
+                var thisRef = this
+
+                axios.get('https://restcountries.eu/rest/v2/all')
+                    .then(function (response) {
+                        $.each(response.data, function (key, value) {
+                            thisRef.countries.push({country: value.name})
+                        })
+                    })
+            }
+        },
+        methods: {
+            countryInfo: function () {
+                var appRef = this
+                axios.get('https://restcountries.eu/rest/v2/name/' + this.selectedCountry)
+                    .then(function (response) {
+                        appRef.flagUrl = response.data[0].flag
+                        appRef.name = response.data[0].name
+                        appRef.capital = response.data[0].capital
+                        appRef.alphaCode = response.data[0].alpha2Code
+                        appRef.subregion = response.data[0].subregion
+                        appRef.timeZone = response.data[0].timezones[0]
+                        appRef.lat = response.data[0].latlng[0]
+                        appRef.lng = response.data[0].latlng[1]
+                        appRef.language = response.data[0].languages[0].name
+                        appRef.currency = response.data[0].currencies[0].name
+                        appRef.area = response.data[0].area
+                        appRef.people = response.data[0].demonym
+                    })
+            }
+        },
+        /* Vue app lifecyle instance*/
+        created: function () {
+            this.countriesName
+        }
+    });
+    /* Vue app ends*/
+
+    /* Jquery to load background image for page when it loads */
+    $(document).ready(function () {
+        images = [
+            {image: 'images/adventure-alm-cabin.jpg'},
+            {image: 'images/adventure-bench-clouds.jpg'},
+            {image: 'images/adventure-clouds-conifer.jpg'},
+            {image: 'images/adventure-countryside-daylight.jpg'},
+            {image: 'images/blue-clouds-country.jpg'},
+            {image: 'images/boathhouse-cottage-dock.jpg'},
+            {image: 'images/cascade-cliff-clouds.jpg'},
+            {image: 'images/cascade-ice-island.jpg'},
+            {image: 'images/clouds-country-daylight.jpg'},
+            {image: 'images/clouds-dawn-dusk.jpg'},
+        ];
+
+        $('body').css('background-image', 'url(' + images[Math.floor(Math.random() * images.length)].image + ')')
+            .css('background-repeat', 'no-repeat')
+            .css('background-size', 'cover');
+    });
+</script>
+</body>
+
+</html>
