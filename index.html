@@ -122,7 +122,7 @@
                 countriesName: function () {
                     var thisRef = this
 
-                    axios.get('https://restcountries.eu/rest/v2/all')
+                    axios.get('https://restcountries.com/v3.1/all')
                         .then(function (response) {
                             $.each(response.data, function (key, value) {
                                 thisRef.countries.push({ country: value.name })
@@ -133,7 +133,7 @@
             methods: {
                 countryInfo: function () {
                     var appRef = this
-                    axios.get('https://restcountries.eu/rest/v2/name/' + this.selectedCountry)
+                    axios.get('https://restcountries.com/v3.1/name/' + this.selectedCountry)
                         .then(function (response) {
                             appRef.flagUrl = response.data[0].flag
                             appRef.name = response.data[0].name
